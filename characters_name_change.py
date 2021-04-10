@@ -1,4 +1,4 @@
-# This script changes all names of the characters in the play 
+# This  script changes all names of the characters in the play 
 # that are in the beginning of each new line by suggesting the user 
 # to manually replace all names to the needed ones
 

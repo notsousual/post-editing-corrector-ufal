@@ -1,4 +1,4 @@
-Je ráno. Robot vstupuje do pokoje svého pána, který je opravdu starý a nemocný. Robot vidí, že jeho pánovi se dnes ráno moc nedaří. Sedí na kraji postele a bere ho za ruku.
+Je ráno.  Robot vstupuje do pokoje svého pána, který je opravdu starý a nemocný. Robot vidí, že jeho pánovi se dnes ráno moc nedaří. Sedí na kraji postele a bere ho za ruku.
 Robot: Pamatuju si, jak jsi na tuhle postel skákala, když jsi byla malá. Byl jsi plný fazolí.
 Mistr: Oba víme, že umírám.
 ---

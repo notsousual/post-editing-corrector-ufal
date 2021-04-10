@@ -1,4 +1,4 @@
-# This script changes T-V distinction between 2 characters in the scenarios.
+# This  script changes T-V distinction between 2 characters in the scenarios.
 
 # Copy-paste your scenario into dialog.txt
 # The final output will be in result.txt as well as in the console
