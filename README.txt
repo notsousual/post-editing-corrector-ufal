@@ -1,4 +1,4 @@
-INSTRUCTION:  T_V_distinction_script.py
+INSTRUCTION: T_V_distinction_script.py
 
 This script changes T-V distinction between 2 characters in the scenarios.
 
