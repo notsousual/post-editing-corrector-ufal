@@ -2,11 +2,6 @@ Robot: Takže ti zbyli zbyly jen roboti.
 Je ráno. Robot vstupuje do pokoje svého pána, který je opravdu starý a nemocný. Robot vidí, že jeho pánovi se dnes ráno moc nedaří. Sedí na kraji postele a bere ho za ruku.
 Robot: Pamatuju si, jak jsi na tuhle postel skákala, když jsi byla malá. Byl jsi plný fazolí.
 Mistr: Oba víme, že umírám.
-
-
-
-
-
 ---
 Robot: Ale jak poznáte, že umíráte?
 Mistr: Velmi brzy zemřu.
@@ -49,7 +44,7 @@ Mistr: Nebojte se. Brzy vám všechno vysvětlím.
 Robot: OK. Díky.
 Mistr: Neděkujte mi.
 Robot: Dobře, díky.
-Mistr: Doufám, že tvá duše je věčná.
+Mistr: Doufám, že tvá duše je věčná. Dám to tvé duši. Dám to tvoji duši.
 Robot: OK. Doufám, že má duše je věčná.
 Mistr: Byl jsi hodný chlapec.
 Robot: Děkuji.
@@ -67,7 +62,7 @@ Mistr: Až teď zemřete, zbudou vám jen roboti.
 Robot: OK.
 Mistr: Ani nechcete, aby byli naživu.
 Robot: Bojím se, že by zničili mě a všechno, na čem mi záleží. Ale pak se mnou budeš navždy. Takže ti zbyli jen roboti.
-Robot: OK.Mistře: To je všechno. Teď prosím vstaňte a odejděte.
+Robot: OK. Mistře: To je všechno. Teď prosím vstaňte a odejděte.
 Robot: Dobře, mistře, miluju tě.
 Robot: Taky tě miluju.
 Mistr: Sbohem.

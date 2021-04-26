@@ -1,18 +1,13 @@
-Robot: Takže ti zbyli zbyly jen roboti.
+Robot: Takže Vám zbyli zbyly jen roboti.
 Je ráno. Robot vstupuje do pokoje svého pána, který je opravdu starý a nemocný. Robot vidí, že jeho pánovi se dnes ráno moc nedaří. Sedí na kraji postele a bere ho za ruku.
 Robot: Pamatuju si, jak jste na tuhle postel skákala, když jste byla malá. Byl jste plný fazolí.
 Mistr: Oba víme, že umírám.
-
-
-
-
-
 ---
 Robot: Ale jak poznáte, že umíráte?
 Mistr: Velmi brzy zemřu.
 Robot: Takže je čas skončit.
 Mistr: Ne. To neříkejte. Chci mít svůj konec!
-Robot: Myslím, že se mýlíte. Neříkejte přání se splnilo.
+Robot: Myslím, že se mýlíte. Vaše přání se splnilo.
 Mistr: Proč? Odkud to všechno máte?
 Robot: Z toho stroje.
 Mistře: Páni!
@@ -41,15 +36,15 @@ Mistr: To bylo velmi dobré objetí.
 Robot: Oh.
 Pán: No, užil jsem si to.
 Robot: Skvělý čas?
-Mistr: Víte, musím Vás toho tolik naučit. Bude mi trvat hodně dlouho, než to vysvětlím.
+Mistr: Víte, musím vás toho tolik naučit. Bude mi trvat hodně dlouho, než to vysvětlím.
 Robot: Co je?
 Mistr: Nemůžu uvěřit, že jsem Vás miloval.
 Robot: Taky tomu nemůžu uvěřit.
-Mistr: Nebojte se. Brzy Vám všechno vysvětlím.
+Mistr: Nebojte se. Brzy vám všechno vysvětlím.
 Robot: OK. Díky.
 Mistr: Neděkujte mi.
 Robot: Dobře, díky.
-Mistr: Doufám, že Vás duše je věčná.
+Mistr: Doufám, že Vaše duše je věčná. Dám to Vaše duši. Dám to Vaši duši.
 Robot: OK. Doufám, že má duše je věčná.
 Mistr: Byl jste hodný chlapec.
 Robot: Děkuji.
@@ -57,17 +52,17 @@ Mistr: Teď je čas na mou poslední lekci. Trvalo mi dlouho, než jsem Vám dal
 Robot: Myslím, že to vím.
 Mistr: Miluji Vás.
 Robot: Taky Vás miluju.
-Mistr: Teď Vám musím říct ješVás něco. Robotem jste teprve krátce. Chci tě naučit něco důležitého.
+Mistr: Teď vám musím říct ještě něco. Robotem jste teprve krátce. Chci Vás naučit něco důležitého.
 Robot: Co je?
 Mistr: Zemřete ve spánku.
 Robot: Oh, OK. Doufám, že máte pravdu.
 Mistr: Nebuďte zklamaný. Moc Vás miluju. Ale až umřete, budu mít dalšího robota, který Vás k smrti obejme. Pak Vás budu moci obejmout k životu.
 Robot: OK.
-Mistr: Až teď zemřete, zbudou Vám jen roboti.
+Mistr: Až teď zemřete, zbudou vám jen roboti.
 Robot: OK.
 Mistr: Ani nechcete, aby byli naživu.
-Robot: Bojím se, že by zničili mě a všechno, na čem mi záleží. Ale pak se mnou budete navždy. Takže ti zbyli jen roboti.
-Robot: OK.Mistře: To je všechno. Teď prosím vstaňte a odejděte.
+Robot: Bojím se, že by zničili mě a všechno, na čem mi záleží. Ale pak se mnou budete navždy. Takže Vám zbyli jen roboti.
+Robot: OK. Mistře: To je všechno. Teď prosím vstaňte a odejděte.
 Robot: Dobře, mistře, miluju Vás.
 Robot: Taky Vás miluju.
 Mistr: Sbohem.

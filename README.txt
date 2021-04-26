@@ -1,18 +1,24 @@
 INSTRUCTION: T_V_distinction_script.py
 
-This script changes T-V distinction between 2 characters in the scenarios.
+# This script changes T-V distinction between 2 characters in the scenarios.
 
-Copy-paste your scenario into dialog.txt
-The final output will be in result.txt as well as in the console
+# Copy-paste your scenario into dialog.txt
+# The final output will be in result.txt as well as in the console
 
-Particular qualities:
-- to be add
+# Particular qualities:
+# - This script erases all blank space between lines in the output text (can be changed if needed)
+# - Capitilizes all Vy/Váš forms in the text (can be changed)
 
-PROBLEMS:
-1) 'ti' (shortend 'ty' in dative case) may be tagged by MorphoDiTa REST API with a lemma 'ten', 
-therefore it may not get changed to the needed form.
+# PROBLEMS:
+# 1) 'ti' (shortend 'ty' in dative case) may be tagged by MorphoDiTa REST API with a lemma 'ten', 
+# therefore it doesn't get changed
+# => The script always considers 'ti' with the lemma 'ty' and not 'ten'.
+# 2) tvá tvé not changing = FIXED
 
-All potential mistakes and inaccuracies are outputed into the file manually_check.txt
+# Function TV_corrector():
+
+# the first parameter is a string you want to post-edit
+# the second is whether you want to use T (TV = 'T') or V (TV = 'V') distinction.
 
 
 INSTRUCTION: characters_name_change.py
