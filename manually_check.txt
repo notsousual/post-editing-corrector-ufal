@@ -1,3 +1,0 @@
- Possible inaccuracy in a line number: 1. Lemma for 'ti' (= 'ty') can be indicated as 'ten'.
- Possible inaccuracy in a line number: 56. Lemma for 'ti' (= 'ty') can be indicated as 'ten'.
- Possible inaccuracy in a line number: 69. Lemma for 'ti' (= 'ty') can be indicated as 'ten'.
