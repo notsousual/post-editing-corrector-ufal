@@ -80,9 +80,7 @@ def TV_corrector(str_to_post_edit, TV='V'):
     
     searched_form = 'ERROR'
   
-    all = [str(str_to_post_edit)]
-
-    my_response = requests.get("http://lindat.mff.cuni.cz/services/morphodita/api/tag?data=" + all[0] + "&convert_tagset=pdt_to_conll2009&output=json")
+    my_response = requests.get("http://lindat.mff.cuni.cz/services/morphodita/api/tag?data=" + str(str_to_post_edit) + "&convert_tagset=pdt_to_conll2009&output=json")
     my_response.encoding = 'utf8'
 
     tagged = json.loads(my_response.text)
@@ -98,7 +96,6 @@ def TV_corrector(str_to_post_edit, TV='V'):
 
     for index in range(len(original_tagged_sentences)):
         
-        current_sentence = all[0]
 
         # !!! 'Ti' fix, The script always considers 'ti' with the lemma 'ty' and not 'ten'
         if (original_tagged_sentences[index]['token'] == 'ti') and TV == 'V':
@@ -112,8 +109,8 @@ def TV_corrector(str_to_post_edit, TV='V'):
 
             #capitalizes all Vy forms
             if original_tagged_sentences[index]['token'][0].upper() == 'V':
+                sentences_to_change[index]['token'] = sentences_to_change[index]['token'].capitalize()
                 
-                all[0] = current_sentence.replace(original_tagged_sentences[index]['token'], original_tagged_sentences[index]['token'].capitalize(), 1)
                 
             if verb_number_1 not in original_tagged_sentences[index]['tag']:
 
