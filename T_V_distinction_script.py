@@ -62,20 +62,18 @@ def TV_corrector(str_to_post_edit, TV='V'):
     if TV == 'T':
         verb_number_1 = 'Num=S' # ty verbs
         verb_number_2 = 'Num=P' # vy verbs
-
         pronoun_number_1 = 'PNu=S' # for vas !tvuj
         pronoun_number_2 = 'PNu=P' # !váš
         
     if TV == 'V':
         verb_number_1 = 'Num=P'  # vy verbs
         verb_number_2 = 'Num=S' # ty verbs
-
         pronoun_number_1 = 'PNu=P' # !váš 
         pronoun_number_2 = 'PNu=S' # for vas !tvuj
 
     preposition = 'POS=R'
     
-    #  tě a zkrácené formy ~ SubPOS=H
+    # tě a zkrácené formy ~ SubPOS=H
     # tebe vás ~ SubPOS=P
     
     searched_form = 'ERROR'
@@ -96,7 +94,6 @@ def TV_corrector(str_to_post_edit, TV='V'):
 
     for index in range(len(original_tagged_sentences)):
         
-
         # !!! 'Ti' fix, The script always considers 'ti' with the lemma 'ty' and not 'ten'
         if (original_tagged_sentences[index]['token'] == 'ti') and TV == 'V':
             temp = {"token":"ti","lemma":"ty","tag":"POS=P|SubPOS=H|Num=S|Cas=3|Per=2"}
@@ -148,9 +145,8 @@ def TV_corrector(str_to_post_edit, TV='V'):
                         
                         if 'space' in original_tagged_sentences[index]: 
                             searched_form['space'] = original_tagged_sentences[index]['space']
-                        
+                    
                         searched_form['token'] = searched_form.pop('form')
-
                         break
 
             
@@ -198,7 +194,6 @@ def TV_corrector(str_to_post_edit, TV='V'):
                         if 'space' in original_tagged_sentences[index]: 
                             searched_form['space'] = original_tagged_sentences[index]['space']
                         searched_form['token'] = searched_form.pop('form')
-
                         break
 
                 if searched_form != 'ERROR':
@@ -230,13 +225,11 @@ def TV_corrector(str_to_post_edit, TV='V'):
                     
                 for item in generated:
                     if item['tag'] == needed_tag:
-
                         searched_form = item
 
                         if 'space' in original_tagged_sentences[index]: 
                             searched_form['space'] = original_tagged_sentences[index]['space']
                         searched_form['token'] = searched_form.pop('form')
-
                         break
                 
                 # Replace previous word with searched word form
@@ -250,7 +243,6 @@ def TV_corrector(str_to_post_edit, TV='V'):
                 if searched_form['token'] == 'Bodeš': searched_form['token'] = 'Budeš'
                 if searched_form['token'] == 'Bodete': searched_form['token'] = 'Budete'
                 
-
                 if searched_form != 'ERROR':
                     sentences_to_change[index] = searched_form
             
