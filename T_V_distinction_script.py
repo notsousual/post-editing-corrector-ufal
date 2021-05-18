@@ -40,10 +40,10 @@ f.close()
 
 ty = ['POS=V','Per=2', 'Num=S', 'PNu=S']
 vy = ['POS=V', 'Per=2', 'Num=P', 'PNu=P']
-condition1 = 'Num=S' # ty verbs
-condition2 = 'Num=P' # vy verbs
-condition3 = 'PNu=S' # tvůj
-condition4 = 'PNu=P' # váš
+verb_number_1 = 'Num=S' # ty verbs
+verb_number_2 = 'Num=P' # vy verbs
+pronoun_number_1 = 'PNu=S' # tvůj
+pronoun_number_2 = 'PNu=P' # váš
 condition5 = 'SubPOS=H' # tě ti atd.
 #  tě a zkrácené formy ~ SubPOS=H
 # tebe vás ~ SubPOS=P
@@ -60,18 +60,18 @@ def TV_corrector(str_to_post_edit, TV='V'):
     # the second is whether you want to use T (TV = 'T') or V (TV = 'V') distinction.
 
     if TV == 'T':
-        condition1 = 'Num=S' # ty verbs
-        condition2 = 'Num=P' # vy verbs
+        verb_number_1 = 'Num=S' # ty verbs
+        verb_number_2 = 'Num=P' # vy verbs
 
-        condition3 = 'PNu=S' # for vas !tvuj
-        condition4 = 'PNu=P' # !váš
+        pronoun_number_1 = 'PNu=S' # for vas !tvuj
+        pronoun_number_2 = 'PNu=P' # !váš
         
     if TV == 'V':
-        condition1 = 'Num=P'  # vy verbs
-        condition2 = 'Num=S' # ty verbs
+        verb_number_1 = 'Num=P'  # vy verbs
+        verb_number_2 = 'Num=S' # ty verbs
 
-        condition3 = 'PNu=P' # !váš 
-        condition4 = 'PNu=S' # for vas !tvuj
+        pronoun_number_1 = 'PNu=P' # !váš 
+        pronoun_number_2 = 'PNu=S' # for vas !tvuj
     
     condition5 = 'SubPOS=H' # tě ti atd.
 
@@ -79,235 +79,231 @@ def TV_corrector(str_to_post_edit, TV='V'):
     # tebe vás ~ SubPOS=P
     
     searched_form = 'ERROR'
-    current_sentence = str_to_post_edit
+  
     all = [str(str_to_post_edit)]
 
-    for to_edit_index in range(len(all)):
+    my_response = requests.get("http://lindat.mff.cuni.cz/services/morphodita/api/tag?data=" + all[0] + "&convert_tagset=pdt_to_conll2009&output=json")
+    my_response.encoding = 'utf8'
 
-        #tags to_edit_index
+    tagged = json.loads(my_response.text)
 
-        my_response = requests.get("http://lindat.mff.cuni.cz/services/morphodita/api/tag?data=" + all[to_edit_index] + "&convert_tagset=pdt_to_conll2009&output=json")
-        my_response.encoding = 'utf8'
+    tagged_sentence = []
 
-        tagged = json.loads(my_response.text)
+    for i in tagged['result']:
+        tagged_sentence.append(i)
 
-        tagged_sentence = []
+    # тут 2 + листа с тегами в листе
 
-        for i in tagged['result']:
-            tagged_sentence.append(i)
+    tagged_sentences = []
 
-        # тут 2 + листа с тегами в листе
+    #merging multiple tagged sentences into one list without list-in-a-list structure
 
-        tagged_sentences = []
+    for lists in tagged_sentence:
+        for element in lists:
+            tagged_sentences.append(element)
 
-        #merging multiple tagged sentences into one list without list-in-a-list structure
-
-        for lists in tagged_sentence:
-            for element in lists:
-                tagged_sentences.append(element)
-
-        sentences_list_to_change = tagged_sentences.copy()
+    sentences_list_to_change = tagged_sentences.copy()
 
 
-        for index in range(len(tagged_sentences)):
-            
-            current_sentence = all[to_edit_index]
+    for index in range(len(tagged_sentences)):
+        
+        current_sentence = all[0]
 
-            # !!! 'Ti' fix, The script always considers 'ti' with the lemma 'ty' and not 'ten'
+        # !!! 'Ti' fix, The script always considers 'ti' with the lemma 'ty' and not 'ten'
 
-            if (tagged_sentences[index]['token'] == 'ti') and TV == 'V':
-                temp = {"token":"ti","lemma":"ty","tag":"POS=P|SubPOS=H|Num=S|Cas=3|Per=2"}
-                if 'space' in tagged_sentences[index]: temp['space'] = tagged_sentences[index]['space']
-                tagged_sentences[index] = temp
-   
+        if (tagged_sentences[index]['token'] == 'ti') and TV == 'V':
+            temp = {"token":"ti","lemma":"ty","tag":"POS=P|SubPOS=H|Num=S|Cas=3|Per=2"}
+            if 'space' in tagged_sentences[index]: temp['space'] = tagged_sentences[index]['space']
+            tagged_sentences[index] = temp
 
-            # TY-VY FORMS
-            if tagged_sentences[index]['lemma'] == 'ty':
 
-                #capitalizes all Vy forms
-                if tagged_sentences[index]['token'][0].upper() == 'V':
-                    
-                    all[to_edit_index] = current_sentence.replace(tagged_sentences[index]['token'], tagged_sentences[index]['token'].capitalize(), 1)
-                    
-                if condition1 not in tagged_sentences[index]['tag']:
-                    word_to_replace = tagged_sentences[index]['token']
+        # TY-VY FORMS
+        if tagged_sentences[index]['lemma'] == 'ty':
 
-                    r = requests.get("http://lindat.mff.cuni.cz/services/morphodita/api/generate?data=" + tagged_sentences[index]['lemma'] + "&convert_tagset=pdt_to_conll2009&output=json")
-                    r.encoding = 'utf8'
-                    r1 = json.loads(r.text)
-                    generated = r1['result'][0] #generated tagged_sentences[index] forms
-
-                    cur_tag = str(tagged_sentences[index]['tag'])
-
-                    needed_tag = cur_tag.replace(condition2, condition1)
-
-                    if 'SubPOS=H' in cur_tag and condition1 == 'Num=P':
-                        needed_tag = needed_tag.replace('SubPOS=H', 'SubPOS=P')                
-
-                    # getting needed tagged_sentences[index] form
-
-                    for item in generated:
-                        if item['tag'] == needed_tag:
-
-                            searched_form = item
-                    
-                            # this part corrects tebe-tě variations if replaced from e.g. vás
-
-                            if index != 0 and 'Num=S' in needed_tag:
-            
-                                # EXPLANAITION: if the word before is not a preposition then:
-                                if 'POS=R' not in tagged_sentences[index - 1]['tag']:
-
-                                    assumption = item['tag'].replace('SubPOS=P', 'SubPOS=H')
-
-                                    for i in generated:
-                                        if assumption == i['tag']:
-                                            searched_form = i
-                                           
-                            
-                            if 'space' in tagged_sentences[index]: 
-                                searched_form['space'] = tagged_sentences[index]['space']
-                            
-                            searched_form['token'] = searched_form.pop('form')
-
-                            break
-
+            #capitalizes all Vy forms
+            if tagged_sentences[index]['token'][0].upper() == 'V':
                 
-                    if tagged_sentences[index]['token'][0].isupper() is True or searched_form['token'][0] == 'v':
-                        for_capitalization = searched_form['token'].capitalize()
-                        searched_form['token'] = for_capitalization
-                    # Replace previous word with a searched word form
+                all[0] = current_sentence.replace(tagged_sentences[index]['token'], tagged_sentences[index]['token'].capitalize(), 1)
+                
+            if verb_number_1 not in tagged_sentences[index]['tag']:
+                word_to_replace = tagged_sentences[index]['token']
 
-                    if searched_form != 'ERROR':
-                        sentences_list_to_change[index] = searched_form
+                r = requests.get("http://lindat.mff.cuni.cz/services/morphodita/api/generate?data=" + tagged_sentences[index]['lemma'] + "&convert_tagset=pdt_to_conll2009&output=json")
+                r.encoding = 'utf8'
+                r1 = json.loads(r.text)
+                generated = r1['result'][0] #generated tagged_sentences[index] forms
 
+                cur_tag = str(tagged_sentences[index]['tag'])
 
-            # replace TVŮJ-VÁŠ
+                needed_tag = cur_tag.replace(verb_number_2, verb_number_1)
 
-            if tagged_sentences[index]['lemma'] == 'tvůj':
+                if 'SubPOS=H' in cur_tag and verb_number_1 == 'Num=P':
+                    needed_tag = needed_tag.replace('SubPOS=H', 'SubPOS=P')                
 
-                #capitalizes all Vy forms
-                if tagged_sentences[index]['token'][0] == 'v':
+                # getting needed tagged_sentences[index] form
+
+                for item in generated:
+                    if item['tag'] == needed_tag:
+
+                        searched_form = item
+                
+                        # this part corrects tebe-tě variations if replaced from e.g. vás
+
+                        if index != 0 and 'Num=S' in needed_tag:
+        
+                            # EXPLANAITION: if the word before is not a preposition then:
+                            if 'POS=R' not in tagged_sentences[index - 1]['tag']:
+
+                                assumption = item['tag'].replace('SubPOS=P', 'SubPOS=H')
+
+                                for i in generated:
+                                    if assumption == i['tag']:
+                                        searched_form = i
+                                        
+                        
+                        if 'space' in tagged_sentences[index]: 
+                            searched_form['space'] = tagged_sentences[index]['space']
+                        
+                        searched_form['token'] = searched_form.pop('form')
+
+                        break
+
+            
+                if tagged_sentences[index]['token'][0].isupper() is True or searched_form['token'][0] == 'v':
                     for_capitalization = searched_form['token'].capitalize()
                     searched_form['token'] = for_capitalization
-                
-                if condition3 not in tagged_sentences[index]['tag']:
-                    word_to_replace = tagged_sentences[index]['token']
+                # Replace previous word with a searched word form
 
-                    r = requests.get("http://lindat.mff.cuni.cz/services/morphodita/api/generate?data=" + tagged_sentences[index]['lemma'] + "&convert_tagset=pdt_to_conll2009&output=json")
-                    r.encoding = 'utf8'
-                    r1 = json.loads(r.text)
-                    generated = r1['result'][0] #generated word forms
+                if searched_form != 'ERROR':
+                    sentences_list_to_change[index] = searched_form
+
+
+        # replace TVŮJ-VÁŠ
+
+        if tagged_sentences[index]['lemma'] == 'tvůj':
+
+            #capitalizes all Vy forms
+            if tagged_sentences[index]['token'][0] == 'v':
+                for_capitalization = searched_form['token'].capitalize()
+                searched_form['token'] = for_capitalization
             
-                    cur_tag = str(tagged_sentences[index]['tag'])
-                    needed_tag = cur_tag.replace(condition4, condition3)
+            if pronoun_number_1 not in tagged_sentences[index]['tag']:
+                word_to_replace = tagged_sentences[index]['token']
+
+                r = requests.get("http://lindat.mff.cuni.cz/services/morphodita/api/generate?data=" + tagged_sentences[index]['lemma'] + "&convert_tagset=pdt_to_conll2009&output=json")
+                r.encoding = 'utf8'
+                r1 = json.loads(r.text)
+                generated = r1['result'][0] #generated word forms
+        
+                cur_tag = str(tagged_sentences[index]['tag'])
+                needed_tag = cur_tag.replace(pronoun_number_2, pronoun_number_1)
+        
+                #tvá tvé not changing fix
+                if 'Var=1' in needed_tag and TV == 'V':
+                    needed_tag = needed_tag.replace('Gen=I', 'Gen=H')
+                    needed_tag = needed_tag.replace('Gen=F', 'Gen=H')
+                    needed_tag = needed_tag.replace('|Var=1', '')
             
-                    #tvá tvé not changing fix
-                    if 'Var=1' in needed_tag and TV == 'V':
-                        needed_tag = needed_tag.replace('Gen=I', 'Gen=H')
-                        needed_tag = needed_tag.replace('Gen=F', 'Gen=H')
-                        needed_tag = needed_tag.replace('|Var=1', '')
-              
+            
+                # getting needed word form
+                for item in generated:
+                    if item['tag'] == needed_tag:
                 
-                    # getting needed word form
-                    for item in generated:
-                        if item['tag'] == needed_tag:
-                 
-                            searched_form = item
+                        searched_form = item
 
-                            if 'space' in tagged_sentences[index]: 
-                                searched_form['space'] = tagged_sentences[index]['space']
-                            searched_form['token'] = searched_form.pop('form')
+                        if 'space' in tagged_sentences[index]: 
+                            searched_form['space'] = tagged_sentences[index]['space']
+                        searched_form['token'] = searched_form.pop('form')
 
-                            break
+                        break
 
-                    if searched_form != 'ERROR':
-                        if tagged_sentences[index]['token'][0].isupper() is True or searched_form['token'][0] == 'v':
-                           
-                            for_capitalization = searched_form['token'].capitalize()
-                            searched_form['token'] = for_capitalization
+                if searched_form != 'ERROR':
+                    if tagged_sentences[index]['token'][0].isupper() is True or searched_form['token'][0] == 'v':
                         
-                        # Replace previous word with searched word form
-
-                        sentences_list_to_change[index] = searched_form
-
-            
-
-            # replace verbs in the present tense for T-V
-
-            if 'POS=V' in tagged_sentences[index]['tag'] and 'Per=2' in tagged_sentences[index]['tag']: 
-                
-                if condition1 not in tagged_sentences[index]['tag']:
-                    searched_form = 'ERROR'
-
-                    word_to_replace = tagged_sentences[index]['token']
-                    # make a request, change the token
-                
-                    r = requests.get("http://lindat.mff.cuni.cz/services/morphodita/api/generate?data=" + tagged_sentences[index]['lemma'] + "&convert_tagset=pdt_to_conll2009&output=json")
-                    r.encoding = 'utf8'
-                    r1 = json.loads(r.text)
-                    generated = r1['result'][0]
-
-                    cur_tag = str(tagged_sentences[index]['tag'])
-                    needed_tag = cur_tag.replace(condition2, condition1)
-                        
-                    for item in generated:
-                        if item['tag'] == needed_tag:
-
-                            searched_form = item
-
-                            if 'space' in tagged_sentences[index]: 
-                                searched_form['space'] = tagged_sentences[index]['space']
-                            searched_form['token'] = searched_form.pop('form')
-
-                            break
+                        for_capitalization = searched_form['token'].capitalize()
+                        searched_form['token'] = for_capitalization
                     
                     # Replace previous word with searched word form
 
-                    if tagged_sentences[index]['token'][0].isupper() is True:
-                        for_capitalization = searched_form['token'].capitalize()
-                        searched_form['token'] = for_capitalization
-                    
-                    if searched_form['token'] == 'bodeš': searched_form['token'] = 'budeš'
-                    if searched_form['token'] == 'bodete': searched_form['token'] = 'budete'
-                    if searched_form['token'] == 'Bodeš': searched_form['token'] = 'Budeš'
-                    if searched_form['token'] == 'Bodete': searched_form['token'] = 'Budete'
-                 
+                    sentences_list_to_change[index] = searched_form
 
-                    if searched_form != 'ERROR':
-                        sentences_list_to_change[index] = searched_form
+        
+
+        # replace verbs in the present tense for T-V
+
+        if 'POS=V' in tagged_sentences[index]['tag'] and 'Per=2' in tagged_sentences[index]['tag']: 
+            
+            if verb_number_1 not in tagged_sentences[index]['tag']:
+                searched_form = 'ERROR'
+
+                word_to_replace = tagged_sentences[index]['token']
+                # make a request, change the token
+            
+                r = requests.get("http://lindat.mff.cuni.cz/services/morphodita/api/generate?data=" + tagged_sentences[index]['lemma'] + "&convert_tagset=pdt_to_conll2009&output=json")
+                r.encoding = 'utf8'
+                r1 = json.loads(r.text)
+                generated = r1['result'][0]
+
+                cur_tag = str(tagged_sentences[index]['tag'])
+                needed_tag = cur_tag.replace(verb_number_2, verb_number_1)
+                    
+                for item in generated:
+                    if item['tag'] == needed_tag:
+
+                        searched_form = item
+
+                        if 'space' in tagged_sentences[index]: 
+                            searched_form['space'] = tagged_sentences[index]['space']
+                        searched_form['token'] = searched_form.pop('form')
+
+                        break
+                
+                # Replace previous word with searched word form
+
+                if tagged_sentences[index]['token'][0].isupper() is True:
+                    for_capitalization = searched_form['token'].capitalize()
+                    searched_form['token'] = for_capitalization
+                
+                if searched_form['token'] == 'bodeš': searched_form['token'] = 'budeš'
+                if searched_form['token'] == 'bodete': searched_form['token'] = 'budete'
+                if searched_form['token'] == 'Bodeš': searched_form['token'] = 'Budeš'
+                if searched_form['token'] == 'Bodete': searched_form['token'] = 'Budete'
                 
 
-            # 'BY SES' correction
-            #If it's  'byste se' > will be changed to > 'bys se'
-
-            if tagged_sentences[index]['token'] == 'ses' and TV == 'V':
-          
-                if tagged_sentences[index - 1]['token'] == 'by':
-                    sentences_list_to_change[index - 1] = {"token":"byste","lemma":"být","tag":"POS=V|SubPOS=c|Num=P|Per=2"}
-                    sentences_list_to_change[index] = {"token":"se","lemma":"se","tag":"POS=P|SubPOS=7|Num=X|Cas=4"}
-
-                    if tagged_sentences[index - 1]['token'][0].isupper() is True: sentences_list_to_change[index - 1]["token"] = "Byste"
-                    if tagged_sentences[index]['token'][0].isupper() is True: sentences_list_to_change[index]["token"] = "Se"
-
-                    if 'space' in tagged_sentences[index - 1]: sentences_list_to_change[index - 1]['space'] = tagged_sentences[index - 1]['space']
-                    if 'space' in tagged_sentences[index]: sentences_list_to_change[index]['space'] = tagged_sentences[index - 1]['space']
-
-            if tagged_sentences[index]['token'] == 'sis' and TV == 'V':
-                if tagged_sentences[index - 1]['token'] == 'by':
-
-                    sentences_list_to_change[index - 1] = {"token":"byste","lemma":"být","tag":"POS=V|SubPOS=c|Num=P|Per=2"}
-                    sentences_list_to_change[index] = {"token":"si","lemma":"se","tag":"POS=P|SubPOS=7|Num=X|Cas=3"}
-
-                    if tagged_sentences[index - 1]['token'][0].isupper() is True: sentences_list_to_change[index - 1]["token"] = "Byste"
-                    if tagged_sentences[index]['token'][0].isupper() is True: sentences_list_to_change[index]["token"] = "Si"
-                    
-                    if 'space' in tagged_sentences[index - 1]: sentences_list_to_change[index - 1]['space'] = tagged_sentences[index - 1]['space']
-                    if 'space' in tagged_sentences[index]: sentences_list_to_change[index]['space'] = tagged_sentences[index - 1]['space']
-
-    
+                if searched_form != 'ERROR':
+                    sentences_list_to_change[index] = searched_form
             
-                   
+
+        # 'BY SES' correction
+        #If it's  'byste se' > will be changed to > 'bys se'
+
+        if tagged_sentences[index]['token'] == 'ses' and TV == 'V':
+        
+            if tagged_sentences[index - 1]['token'] == 'by':
+                sentences_list_to_change[index - 1] = {"token":"byste","lemma":"být","tag":"POS=V|SubPOS=c|Num=P|Per=2"}
+                sentences_list_to_change[index] = {"token":"se","lemma":"se","tag":"POS=P|SubPOS=7|Num=X|Cas=4"}
+
+                if tagged_sentences[index - 1]['token'][0].isupper() is True: sentences_list_to_change[index - 1]["token"] = "Byste"
+                if tagged_sentences[index]['token'][0].isupper() is True: sentences_list_to_change[index]["token"] = "Se"
+
+                if 'space' in tagged_sentences[index - 1]: sentences_list_to_change[index - 1]['space'] = tagged_sentences[index - 1]['space']
+                if 'space' in tagged_sentences[index]: sentences_list_to_change[index]['space'] = tagged_sentences[index - 1]['space']
+
+        if tagged_sentences[index]['token'] == 'sis' and TV == 'V':
+            if tagged_sentences[index - 1]['token'] == 'by':
+
+                sentences_list_to_change[index - 1] = {"token":"byste","lemma":"být","tag":"POS=V|SubPOS=c|Num=P|Per=2"}
+                sentences_list_to_change[index] = {"token":"si","lemma":"se","tag":"POS=P|SubPOS=7|Num=X|Cas=3"}
+
+                if tagged_sentences[index - 1]['token'][0].isupper() is True: sentences_list_to_change[index - 1]["token"] = "Byste"
+                if tagged_sentences[index]['token'][0].isupper() is True: sentences_list_to_change[index]["token"] = "Si"
+                
+                if 'space' in tagged_sentences[index - 1]: sentences_list_to_change[index - 1]['space'] = tagged_sentences[index - 1]['space']
+                if 'space' in tagged_sentences[index]: sentences_list_to_change[index]['space'] = tagged_sentences[index - 1]['space']
+
+
+        
+                
 
 
     final_string_list = []
@@ -316,11 +312,11 @@ def TV_corrector(str_to_post_edit, TV='V'):
         final_string_list.append(item['token'])
         if 'space' in item:
             final_string_list.append(item['space'])
-    
+
     final_string = ''.join(final_string_list)
 
     print('final string returned: ' + final_string)
-    
+
     return final_string
 
 
@@ -331,5 +327,5 @@ ttt = open("result.txt", "w")
 
 for string in test_data:
     ttt.write(TV_corrector(string, TV) + '\n')
-    
+
 ttt.close()
